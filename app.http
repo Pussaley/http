@@ -220,7 +220,7 @@ Content-Type: application/json
 
 @newsId1=1
 @newsId2=2
-@newsId3=6
+@newsId3=3
 
 ### Получить список новостей, пользователь: update-me(USER), ожидаемый результат - успех
 
