@@ -1,0 +1,398 @@
+### env
+
+@pussaleyBase64password=cHVzc2FsZXk6cGFzc3dvcmQ=
+@deleteMeBase64password=ZGVsZXRlLW1lOjEyMzQ1
+@updateMeBase64password=dXBkYXRlLW1lOjEyMzQ1
+
+### Создать пользователя с ролью ADMIN (первый пользователь с username 'pussaley' получает роль 'ADMIN')
+
+POST http://localhost:8080/api/v1/users, ожидаемый результат - успех
+Content-Type: application/json
+
+{
+  "username"  : "pussaley",
+  "firstName" : "Слава",
+  "lastName"  : "Java-Coder",
+  "password"  : "password"
+}
+
+### Создать пользователя с ролью USER
+
+POST http://localhost:8080/api/v1/users, ожидаемый результат - успех
+Content-Type: application/json
+
+{
+  "username"  : "update-me",
+  "firstName" : "Иван",
+  "lastName"  : "Иванов",
+  "password"  : "12345"
+}
+
+### Создать пользователя с ролью USER, ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+
+{
+  "username"  : "delete-me",
+  "firstName" : "Петр",
+  "lastName"  : "Петров",
+  "password"  : "12345"
+}
+
+### ENV Результат создания пользователей:
+
+@pussaleyId=1
+@updateMeId=2
+@deleteMeId=3
+
+### Получить список пользователей, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+GET http://localhost:8080/api/v1/users
+Authorization: Basic {{pussaleyBase64password}}
+
+### Получить список пользователей, пользователь: update-me(USER), ожидаемый результат - провал
+GET http://localhost:8080/api/v1/users
+Authorization: Basic {{updateMeBase64password}}
+
+### Получить конкретного пользователя по ID(другого пользователя), пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/users/{{updateMeId}}
+Authorization: Basic {{pussaleyBase64password}}
+
+###  Получить конкретного пользователя по ID (сам себя), пользователь: delete-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/users/{{deleteMeId}}
+Authorization: Basic {{deleteMeBase64password}}
+
+###  Получить конкретного пользователя по ID (другого пользователя), пользователь: delete-me(USER), ожидаемый результат - провал
+
+GET http://localhost:8080/api/v1/users/{{updateMeId}}
+Authorization: Basic {{deleteMeBase64password}}
+
+### Отредактировать пользователя update-me, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+PUT http://localhost:8080/api/v1/users/{{updateMeId}}
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "username"  : "update-me",
+  "firstName" : "Семен",
+  "lastName"  : "Иванов",
+  "password"  : "12345"
+}
+
+### Отредактировать пользователя update-me, пользователь: delete-me(USER), ожидаемый результат - провал
+
+PUT http://localhost:8080/api/v1/users/{{updateMeId}}
+Authorization: Basic {{deleteMeBase64password}}
+Content-Type: application/json
+
+{
+  "username"  : "update-me",
+  "firstName" : "Ничего",
+  "lastName"  : "Не поменяется",
+  "password"  : "12345"
+}
+
+### Отредактировать пользователя update-me, пользователь: update-me(USER), ожидаемый результат - успех
+
+PUT http://localhost:8080/api/v1/users/{{updateMeId}}
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "username"  : "update-me",
+  "firstName" : "Обновленное имя",
+  "lastName"  : "Обновленная фамилия",
+  "password"  : "12345"
+}
+  
+### Создать категорию, пользователь: update-me(USER), ожидаемый результат - провал
+
+POST http://localhost:8080/api/v1/categories
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "title" : "Технологии"
+}
+
+### Создать категорию, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/categories
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "title" : "Технологии"
+}
+
+### Создать категорию, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/categories
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "title" : "Спорт"
+}
+
+### Создать категорию, пользователь: update-me(USER), ожидаемый результат - провал
+
+POST http://localhost:8080/api/v1/categories
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "title" : "Категория не будет создана"
+}
+
+### ENV Результат создания категорий: 1 - техно, 2 - спорт
+
+@catId1=1
+@catId2=2
+
+### Получить список категорий, пользователь: update-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/categories
+Authorization: Basic {{updateMeBase64password}}
+
+### Получить список категорий, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+GET http://localhost:8080/api/v1/categories
+Authorization: Basic {{pussaleyBase64password}}
+
+###  Получить категорию по ID, пользователь: update-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/categories/{{catId1}}
+Authorization: Basic {{updateMeBase64password}}
+
+### Получить категорию по ID, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/categories/{{catId2}}
+Authorization: Basic {{pussaleyBase64password}}
+
+### Отредактировать категорию, пользователь: update-me(USER),  ожидаемый результат - провал
+
+PUT http://localhost:8080/api/v1/categories/{{catId1}}
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "title": "IT-Технологии"
+}
+
+### Отредактировать категорию, пользователь: pussaley(ADMIN),  ожидаемый результат - успех
+
+PUT http://localhost:8080/api/v1/categories/{{catId1}}
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "title": "IT-Технологии"
+}
+
+### Создать две новости для категории №1, пользователь: update-me(USER), ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/news
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "title" : "Новость №1",
+  "description": "Важная новость в сфере ИИ",
+  "categoryId": {{catId1}}
+}
+
+### Создать одну новость для категории №2, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/news
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "title" : "Новость спорта",
+  "description": "Очень интересная новость о спорте",
+  "categoryId": {{catId2}}
+}
+
+### ENV Результат создания новостей
+
+@newsId1=1
+@newsId2=2
+@newsId3=6
+
+### Получить список новостей, пользователь: update-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/news
+Authorization: Basic {{updateMeBase64password}}
+
+### Получить список новостей, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+GET http://localhost:8080/api/v1/news
+Authorization: Basic {{pussaleyBase64password}}
+
+###  Получить новость по ID, пользователь: update-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/news/{{newsId1}}
+Authorization: Basic {{updateMeBase64password}}
+
+### Получить новость по ID, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/news/{{newsId2}}
+Authorization: Basic {{pussaleyBase64password}}
+  
+### Отредактировать новость №2 (автор - update-me), пользователь: pussaley(ADMIN), ожидаемый результат - провал
+
+PUT http://localhost:8080/api/v1/news/{{newsId1}}
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "title": "Название не изменилось",
+  "description": "Описание тоже",
+  "categoryId": {{catId1}}
+}
+
+### Отредактировать новость №2 (автор - update-me), пользователь: update-me(USER), ожидаемый результат - успех
+
+PUT http://localhost:8080/api/v1/news/{{newsId1}}
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "title": "Новое название про ИИ",
+  "description": "Новое описание новости про спорт",
+  "categoryId": {{catId1}}
+}
+
+### Создать 2 комментария для новости №1, пользователь: update-me(USER), ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/news/{{newsId1}}/comments
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "text": "Текст комментария №2"
+}
+
+### Создать 1 комментарий для новости №2, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+POST http://localhost:8080/api/v1/news/{{newsId2}}/comments
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "text": "Текст комментария №3"
+}
+
+#### ENV
+
+@commentId1=1
+@commentId2=2
+@commentId3=3
+
+### Получить список комментариев к новости №1, пользователь: update-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/news/{{newsId1}}/comments
+Authorization: Basic {{updateMeBase64password}}
+
+### Получить список комментариев к новости №2, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+GET http://localhost:8080/api/v1/news/{{newsId2}}/comments
+Authorization: Basic {{pussaleyBase64password}}
+
+###  Получить комментарий по ID (автор - update-me), пользователь: update-me(USER), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/news/{{newsId1}}/comments/{{commentId1}}
+Authorization: Basic {{updateMeBase64password}}
+
+<> 2026-01-11T225339.200.json
+
+### Получить комментарий по ID(автор - update-me), пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+GET http://localhost:8080/api/v1/news/{{newsId2}}/comments/{{commentId2}}
+Authorization: Basic {{pussaleyBase64password}}
+
+### Отредактировать комментарий №1 (автор - update-me), пользователь: update-me(USER),  ожидаемый результат - успех
+
+PUT http://localhost:8080/api/v1/comments/{{commentId1}}
+Authorization: Basic {{updateMeBase64password}}
+Content-Type: application/json
+
+{
+  "text": "Обновленный комментарий №1"
+}
+
+### Отредактировать комментарий №2 (автор - update-me), пользователь: pussaley(ADMIN), ожидаемый результат - провал
+
+PUT http://localhost:8080/api/v1/comments/{{commentId2}}
+Authorization: Basic {{pussaleyBase64password}}
+Content-Type: application/json
+
+{
+  "text" : "Новый текст комментария №2"
+}
+
+### Отредактировать комментарий №3 (автор - pussaley), пользователь: delete-me(USER), ожидаемый результат - провал
+
+PUT http://localhost:8080/api/v1/comments/{{commentId3}}
+Authorization: Basic {{deleteMeBase64password}}
+Content-Type: application/json
+
+{
+  "text" : "Текст комментария №3 не изменился"
+}
+
+### Удалить комментарий №1 (создатель update-me), пользователь: delete-me(USER), ожидаемый результат - провал
+
+DELETE http://localhost:8080/api/v1/comments/{{commentId1}}
+Authorization: Basic {{deleteMeBase64password}}
+
+### Удалить комментарий №1 (создатель update-me), пользователь: update-me(USER), ожидаемый результат - успех
+
+DELETE http://localhost:8080/api/v1/comments/{{commentId1}}
+Authorization: Basic {{updateMeBase64password}}
+
+### Удалить комментарий №2 (создатель update-me), пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+DELETE http://localhost:8080/api/v1/comments/{{commentId2}}
+Authorization: Basic {{pussaleyBase64password}}
+
+### Удалить новость №1 (создатель update-me), пользователь: delete-me(USER), ожидаемый результат - провал
+
+DELETE http://localhost:8080/api/v1/news/{{newsId1}}
+Authorization: Basic {{deleteMeBase64password}}
+
+### Удалить новость №1 (создатель update-me), пользователь: update-me(USER), ожидаемый результат - успех
+
+DELETE http://localhost:8080/api/v1/news/{{newsId1}}
+Authorization: Basic {{updateMeBase64password}}
+
+### Удалить новость №2 (создатель update-me), пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+DELETE http://localhost:8080/api/v1/news/{{newsId2}}
+Authorization: Basic {{pussaleyBase64password}}
+
+### Удалить категорию, пользователь: delete-me(USER),  ожидаемый результат - неудача
+
+DELETE http://localhost:8080/api/v1/categories/{{catId1}}
+Authorization: Basic {{deleteMeBase64password}}
+
+### Удалить категорию, пользователь: pussaley(ADMIN),  ожидаемый результат - удача
+
+DELETE http://localhost:8080/api/v1/categories/{{catId1}}
+Authorization: Basic {{pussaleyBase64password}}
+
+### Удалить пользователя delete-me, пользователь: update-me(USER), ожидаемый результат - провал
+
+DELETE http://localhost:8080/api/v1/users/{{deleteMeId}}
+Authorization: Basic {{updateMeBase64password}}
+
+### Удалить пользователя delete-me, пользователь: delete-me(USER), ожидаемый результат - успех
+
+DELETE http://localhost:8080/api/v1/users/{{deleteMeId}}
+Authorization: Basic {{deleteMeBase64password}}
+
+### Удалить пользователя update-me, пользователь: pussaley(ADMIN), ожидаемый результат - успех
+
+DELETE http://localhost:8080/api/v1/users/{{updateMeId}}
+Authorization: Basic {{pussaleyBase64password}}
